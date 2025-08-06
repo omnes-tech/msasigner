@@ -39,7 +39,7 @@ func NewPKSigner(privateKeyHex string) (*PKSigner, error) {
 
 func (k *PKSigner) SignMessage(message []byte) (*big.Int, *big.Int, uint8, error) {
 
-	wrappedMessage := wrapMessage(message)
+	wrappedMessage := formatting.WrapMessage(message)
 	r, s, v, err := k.sign(wrappedMessage)
 	if err != nil {
 		return nil, nil, 0, fmt.Errorf("failed to sign message (KMS): %v", err)
@@ -73,7 +73,7 @@ func (k *PKSigner) GetEVMAddress() *common.Address {
 func (k *PKSigner) ECRecover(message []byte, signature []byte, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 	var hashedMessage []byte
 	if hashFunc != nil {
-		wrappedMessage := wrapMessage(message)
+		wrappedMessage := formatting.WrapMessage(message)
 		hashedMessage = hashFunc(wrappedMessage)
 	} else {
 		hashedMessage = message

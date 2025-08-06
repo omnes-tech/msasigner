@@ -56,7 +56,7 @@ func NewFireblocksSigner(apiPrivateKey []byte, apiKey string, clientId, assetId 
 
 func (m *FireblocksSigner) SignMessage(message []byte) (*big.Int, *big.Int, uint8, error) {
 
-	wrappedMessage := wrapMessage(message)
+	wrappedMessage := formatting.WrapMessage(message)
 
 	r, s, v, err := m.sign(wrappedMessage)
 	if err != nil {
@@ -90,7 +90,7 @@ func (m *FireblocksSigner) GetEVMAddress() *common.Address {
 func (m *FireblocksSigner) ECRecover(message []byte, signature []byte, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 	var hashedMessage []byte
 	if hashFunc != nil {
-		wrappedMessage := wrapMessage(message)
+		wrappedMessage := formatting.WrapMessage(message)
 		hashedMessage = hashFunc(wrappedMessage)
 	} else {
 		hashedMessage = message
@@ -149,8 +149,4 @@ func (m *FireblocksSigner) signHash(hashedMessage []byte, addToV uint8) (*big.In
 	}
 
 	return r, s, v + addToV, nil
-}
-
-func buildSecretPath(projectId, secretId string) string {
-	return fmt.Sprintf("projects/%s/secrets/%s/versions/latest", projectId, secretId)
 }

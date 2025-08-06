@@ -80,7 +80,7 @@ func NewGCPSigner(googleCredentials, googleProjectId, kmsLocationId, kmsKeyRingI
 
 func (k *GCPSigner) SignMessage(message []byte) (*big.Int, *big.Int, uint8, error) {
 
-	wrappedMessage := wrapMessage(message)
+	wrappedMessage := formatting.WrapMessage(message)
 	r, s, v, err := k.sign(wrappedMessage)
 	if err != nil {
 		return nil, nil, 0, fmt.Errorf("failed to sign message (KMS): %v", err)
@@ -114,7 +114,7 @@ func (k *GCPSigner) GetEVMAddress() *common.Address {
 func (k *GCPSigner) ECRecover(message []byte, signature []byte, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 	var hashedMessage []byte
 	if hashFunc != nil {
-		wrappedMessage := wrapMessage(message)
+		wrappedMessage := formatting.WrapMessage(message)
 		hashedMessage = hashFunc(wrappedMessage)
 	} else {
 		hashedMessage = message
@@ -174,7 +174,7 @@ func (k *GCPSigner) signHash(hashedMessage []byte, addToV uint8) (*big.Int, *big
 		return nil, nil, 0, fmt.Errorf("AsymmetricSign: response corrupted in-transit")
 	}
 
-	r, s, err := ParseDERSignature(result.Signature)
+	r, s, err := formatting.ParseDERPublicKey(result.Signature)
 	if err != nil {
 		return nil, nil, 0, fmt.Errorf("failed to parse DER signature: %v", err)
 	}
