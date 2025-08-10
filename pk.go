@@ -66,6 +66,10 @@ func (k *PKSigner) SignHash(message []byte) (*big.Int, *big.Int, uint8, error) {
 	return r, s, v, nil
 }
 
+func (k *PKSigner) SignTx(message []byte) (*big.Int, *big.Int, uint8, error) {
+	return k.SignHash(message)
+}
+
 func (k *PKSigner) GetEVMAddress() *common.Address {
 	return &k.EVMAddress
 }

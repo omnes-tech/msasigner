@@ -84,6 +84,10 @@ func (m *FireblocksSigner) SignHash(message []byte) (*big.Int, *big.Int, uint8, 
 	return r, s, v, nil
 }
 
+func (m *FireblocksSigner) SignTx(message []byte) (*big.Int, *big.Int, uint8, error) {
+	return m.SignHash(message)
+}
+
 func (m *FireblocksSigner) GetEVMAddress() *common.Address {
 	return &m.EVMAddress
 }
