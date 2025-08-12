@@ -10,7 +10,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0
 	github.com/ethereum/go-ethereum v1.16.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/omnes-tech/msamisc v0.8.1
+	github.com/omnes-tech/msamisc v0.8.4
 	github.com/shopspring/decimal v1.4.0
 	google.golang.org/api v0.237.0
 	google.golang.org/protobuf v1.36.6
