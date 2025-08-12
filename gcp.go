@@ -78,36 +78,36 @@ func NewGCPSigner(googleCredentials, googleProjectId, kmsLocationId, kmsKeyRingI
 	}, nil
 }
 
-func (k *GCPSigner) SignMessage(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (k *GCPSigner) SignMessage(message []byte) ([]byte, error) {
 
 	wrappedMessage := formatting.WrapMessage(message)
 	r, s, v, err := k.sign(wrappedMessage)
 	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to sign message (KMS): %v", err)
+		return nil, fmt.Errorf("failed to sign message (KMS): %v", err)
 	}
 
-	return r, s, v, nil
+	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
-func (k *GCPSigner) SignHashWithAddedV(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (k *GCPSigner) SignHashWithAddedV(message []byte) ([]byte, error) {
 	r, s, v, err := k.signHash(message, 27)
 	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to sign hash (KMS): %v", err)
+		return nil, fmt.Errorf("failed to sign hash (KMS): %v", err)
 	}
 
-	return r, s, v, nil
+	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
-func (k *GCPSigner) SignHash(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (k *GCPSigner) SignHash(message []byte) ([]byte, error) {
 	r, s, v, err := k.signHash(message, 0)
 	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to sign hash (KMS): %v", err)
+		return nil, fmt.Errorf("failed to sign hash (KMS): %v", err)
 	}
 
-	return r, s, v, nil
+	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
-func (k *GCPSigner) SignTx(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (k *GCPSigner) SignTx(message []byte) ([]byte, error) {
 	return k.SignHash(message)
 }
 

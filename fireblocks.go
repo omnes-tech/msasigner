@@ -54,37 +54,37 @@ func NewFireblocksSigner(apiPrivateKey []byte, apiKey string, clientId, assetId 
 	}, nil
 }
 
-func (m *FireblocksSigner) SignMessage(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (m *FireblocksSigner) SignMessage(message []byte) ([]byte, error) {
 
 	wrappedMessage := formatting.WrapMessage(message)
 
 	r, s, v, err := m.sign(wrappedMessage)
 	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to sign message (MPC): %v", err)
+		return nil, fmt.Errorf("failed to sign message (MPC): %v", err)
 	}
 
-	return r, s, v, nil
+	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
-func (k *FireblocksSigner) SignHashWithAddedV(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (k *FireblocksSigner) SignHashWithAddedV(message []byte) ([]byte, error) {
 	r, s, v, err := k.signHash(message, 27)
 	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to sign hash (KMS): %v", err)
+		return nil, fmt.Errorf("failed to sign hash (KMS): %v", err)
 	}
 
-	return r, s, v, nil
+	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
-func (m *FireblocksSigner) SignHash(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (m *FireblocksSigner) SignHash(message []byte) ([]byte, error) {
 	r, s, v, err := m.signHash(message, 0)
 	if err != nil {
-		return nil, nil, 0, fmt.Errorf("failed to sign hash (MPC): %v", err)
+		return nil, fmt.Errorf("failed to sign hash (MPC): %v", err)
 	}
 
-	return r, s, v, nil
+	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
-func (m *FireblocksSigner) SignTx(message []byte) (*big.Int, *big.Int, uint8, error) {
+func (m *FireblocksSigner) SignTx(message []byte) ([]byte, error) {
 	return m.SignHash(message)
 }
 
