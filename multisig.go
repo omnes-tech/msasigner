@@ -2,20 +2,14 @@ package msasigner
 
 import (
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/omnes-tech/msamisc/types"
 )
 
-type Signer interface {
-	SignMessage(message []byte) ([]byte, error)
-	SignHash(message []byte) ([]byte, error)
-	SignTx(message []byte) ([]byte, error)
-	GetEVMAddress() (common.Address, error)
-}
-
 type MultisigSigner struct {
-	signers []Signer
+	signers []types.Signer
 }
 
-func NewMultisigSigner(signers []Signer) *MultisigSigner {
+func NewMultisigSigner(signers []types.Signer) *MultisigSigner {
 	return &MultisigSigner{signers: signers}
 }
 
@@ -55,18 +49,15 @@ func (m *MultisigSigner) SignTx(message []byte) ([]byte, error) {
 	return signatures, nil
 }
 
-func (m *MultisigSigner) GetEVMAddress(index int) (common.Address, error) {
+func (m *MultisigSigner) GetEVMAddress(index int) *common.Address {
 	return m.signers[index].GetEVMAddress()
 }
 
-func (m *MultisigSigner) GetEVMAddresses() ([]common.Address, error) {
-	addresses := make([]common.Address, len(m.signers))
+func (m *MultisigSigner) GetEVMAddresses() []*common.Address {
+	addresses := make([]*common.Address, len(m.signers))
 	for i, signer := range m.signers {
-		address, err := signer.GetEVMAddress()
-		if err != nil {
-			return nil, err
-		}
-		addresses[i] = address
+		addresses[i] = signer.GetEVMAddress()
 	}
-	return addresses, nil
+
+	return addresses
 }
