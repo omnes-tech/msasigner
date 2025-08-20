@@ -53,8 +53,8 @@ github.com/leanovate/gopter v0.2.11 h1:vRjThO1EKPb/1NsDXuDrzldR28RLkBflWYcU9CvzW
 github.com/leanovate/gopter v0.2.11/go.mod h1:aK3tzZP/C+p1m3SPRE4SYZFGP7jjkuSI4f7Xvpt0S9c=
 github.com/omnes-tech/abi v0.1.37 h1:Py/st7qfdn6DT9maBkapA49m5DqgsyXbLBq+xzNszFA=
 github.com/omnes-tech/abi v0.1.37/go.mod h1:y6KKLkCgQJE5pEfpVUjD6nZZf9Cafn92w+ZM0SbQ1sI=
-github.com/omnes-tech/msamisc v0.9.11 h1:JV/Bo+1UlOZbedPtMK8eu7E5kRPXthJNGoqGN7PWld8=
-github.com/omnes-tech/msamisc v0.9.11/go.mod h1:3q0PxoVv6+bITxFQFvwUw2QEbSD/PzMRf43fnHqpPfA=
+github.com/omnes-tech/msamisc v0.9.12 h1:iauqY2LMWzMS61VZ5tnFcHG3psdWikfAc7g+SOkeuM8=
+github.com/omnes-tech/msamisc v0.9.12/go.mod h1:3q0PxoVv6+bITxFQFvwUw2QEbSD/PzMRf43fnHqpPfA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/shopspring/decimal v1.4.0 h1:bxl37RwXBklmTi0C79JfXCEBD1cqqHt0bbgBAGFp81k=
