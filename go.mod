@@ -10,7 +10,9 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0
 	github.com/ethereum/go-ethereum v1.16.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/omnes-tech/msamisc v0.8.4
+	github.com/gorilla/websocket v1.5.1
+	github.com/omnes-tech/abi v0.1.37
+	github.com/omnes-tech/msamisc v0.9.11
 	github.com/shopspring/decimal v1.4.0
 	google.golang.org/api v0.237.0
 	google.golang.org/protobuf v1.36.6
@@ -31,7 +33,6 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.14.2 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
-	github.com/omnes-tech/abi v0.1.37 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.61.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
