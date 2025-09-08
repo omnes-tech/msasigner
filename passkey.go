@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/omnes-tech/abi"
 	"github.com/omnes-tech/msamisc/codec"
+	"github.com/omnes-tech/msamisc/formatting"
 )
 
 // PasskeyWebSocketMessage represents the message structure for WebSocket communication
@@ -149,7 +150,7 @@ func (k *PasskeySigner) signHash(hashedMessage []byte) ([]byte, error) {
 		return nil, fmt.Errorf("missing signature in response")
 	}
 
-	r, s, err := parseDERSignature(authResponse.Signature)
+	r, s, err := formatting.ParseDERSignature(authResponse.Signature)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse DER signature: %v", err)
 	}
@@ -174,32 +175,4 @@ func (k *PasskeySigner) signHash(hashedMessage []byte) ([]byte, error) {
 	}
 
 	return encodedSig, nil
-}
-
-func parseDERSignature(signature []byte) (*big.Int, *big.Int, error) {
-	// Parse DER signature to extract r and s
-	// This is a simplified DER parsing for ECDSA signatures
-	rStart := 4 // Skip DER header
-	rLength := int(signature[rStart-1])
-	r := signature[rStart : rStart+rLength]
-
-	// Remove leading zero if present (for positive numbers)
-	if r[0] == 0 {
-		r = r[1:]
-	}
-
-	sStart := rStart + rLength + 2 // Skip to s component
-	sLength := int(signature[sStart-1])
-	s := signature[sStart : sStart+sLength]
-
-	// Remove leading zero if present (for positive numbers)
-	if s[0] == 0 {
-		s = s[1:]
-	}
-
-	// Convert to big.Int strings
-	rBigInt := big.NewInt(0).SetBytes(r)
-	sBigInt := big.NewInt(0).SetBytes(s)
-
-	return rBigInt, sBigInt, nil
 }
