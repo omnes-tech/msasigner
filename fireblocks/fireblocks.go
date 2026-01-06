@@ -1,3 +1,15 @@
+// Package fireblocks provides a Go SDK for interacting with the Fireblocks API.
+// It enables signing messages, managing vault accounts, and retrieving transaction details.
+//
+// Example usage:
+//
+//	sdk, err := fireblocks.NewInstance(privateKey, apiKey, apiURL)
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//
+//	address, err := sdk.GetAddress(vaultId, assetId)
+//	signature, r, s, v, err := sdk.Sign(hashedMessage, vaultId, assetId)
 package fireblocks
 
 import (
