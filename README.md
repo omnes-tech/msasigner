@@ -117,11 +117,3 @@ address, err := sdk.GetAddress(vaultId, assetId)
 // Sign a message
 publicKey, r, s, v, err := sdk.Sign(hashedMessage, vaultId, assetId)
 ```
-
-## License
-
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines here]
