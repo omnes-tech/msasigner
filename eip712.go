@@ -19,6 +19,9 @@ type eip712Domain struct {
 }
 
 func NewEIP712Domain(name, version string, chainId *big.Int, verifyingContract *common.Address, salt []byte) (*eip712Domain, error) {
+	if name == "" && version == "" && chainId == nil && verifyingContract == nil && salt == nil {
+		return nil, fmt.Errorf("name, version, chainId, verifyingContract, and salt cannot all be empty")
+	}
 	if salt != nil && len(salt) != 32 {
 		return nil, fmt.Errorf("salt must be 32 bytes")
 	}
@@ -33,46 +36,86 @@ func NewEIP712Domain(name, version string, chainId *big.Int, verifyingContract *
 }
 
 func (e *eip712Domain) DomainTypeHash() []byte {
-	if e.Salt != nil {
-		return crypto.Keccak256([]byte("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)"))
+	first := true
+	domainString := "EIP712Domain("
+	if e.Name != "" {
+		if first {
+			domainString += "string name"
+			first = false
+		} else {
+			domainString += ",string name"
+		}
 	}
+	if e.Version != "" {
+		if first {
+			domainString += "string version"
+			first = false
+		} else {
+			domainString += ",string version"
+		}
+	}
+	if e.ChainId != nil {
+		if first {
+			domainString += "uint256 chainId"
+			first = false
+		} else {
+			domainString += ",uint256 chainId"
+		}
+	}
+	if e.VerifyingContract != nil {
+		if first {
+			domainString += "address verifyingContract"
+			first = false
+		} else {
+			domainString += ",address verifyingContract"
+		}
+	}
+	if e.Salt != nil {
+		if first {
+			domainString += "bytes32 salt"
+			first = false
+		} else {
+			domainString += ",bytes32 salt"
+		}
+	}
+	domainString += ")"
 
-	return crypto.Keccak256([]byte("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"))
+	return crypto.Keccak256([]byte(domainString))
 }
 
 func (e *eip712Domain) DomainSeparator() ([]byte, error) {
 	domainTypeHash := e.DomainTypeHash()
-	hashedName := crypto.Keccak256([]byte(e.Name))
-	hashedVersion := crypto.Keccak256([]byte(e.Version))
 
+	values := []any{domainTypeHash}
+	types := []string{"bytes32"}
+	if e.Name != "" {
+		hashedName := crypto.Keccak256([]byte(e.Name))
+		values = append(values, hashedName)
+		types = append(types, "bytes32")
+	}
+	if e.Version != "" {
+		hashedVersion := crypto.Keccak256([]byte(e.Version))
+		values = append(values, hashedVersion)
+		types = append(types, "bytes32")
+	}
+	if e.ChainId != nil {
+		values = append(values, e.ChainId)
+		types = append(types, "uint256")
+	}
+	if e.VerifyingContract != nil {
+		values = append(values, e.VerifyingContract)
+		types = append(types, "address")
+	}
 	if e.Salt != nil {
-		encoded, err := abi.Encode(
-			[]string{"bytes32,bytes32,bytes32,uint256,address,bytes32"},
-			domainTypeHash,
-			hashedName,
-			hashedVersion,
-			e.ChainId,
-			e.VerifyingContract,
-			e.Salt,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("failed to encode domain separator: %w", err)
-		}
-
-		return crypto.Keccak256(encoded), nil
+		values = append(values, e.Salt)
+		types = append(types, "bytes32")
 	}
 
-	encoded, err := abi.Encode(
-		[]string{"bytes32,bytes32,bytes32,uint256,address"},
-		domainTypeHash,
-		hashedName,
-		hashedVersion,
-		e.ChainId,
-		e.VerifyingContract,
-	)
+	encoded, err := abi.Encode(types, values...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode domain separator: %w", err)
 	}
+
 	return crypto.Keccak256(encoded), nil
 }
 
