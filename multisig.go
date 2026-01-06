@@ -13,6 +13,7 @@ func NewMultisigSigner(signers []types.Signer) *MultisigSigner {
 	return &MultisigSigner{signers: signers}
 }
 
+// SignMessage signs a message using multisig
 func (m *MultisigSigner) SignMessage(message []byte) ([]byte, error) {
 	var signatures []byte
 	for _, signer := range m.signers {
@@ -25,6 +26,7 @@ func (m *MultisigSigner) SignMessage(message []byte) ([]byte, error) {
 	return signatures, nil
 }
 
+// SignHash signs a hash using multisig
 func (m *MultisigSigner) SignHash(message []byte) ([]byte, error) {
 	var signatures []byte
 	for _, signer := range m.signers {
@@ -37,6 +39,7 @@ func (m *MultisigSigner) SignHash(message []byte) ([]byte, error) {
 	return signatures, nil
 }
 
+// SignTx signs a transaction using multisig
 func (m *MultisigSigner) SignTx(message []byte) ([]byte, error) {
 	var signatures []byte
 	for _, signer := range m.signers {
@@ -49,10 +52,12 @@ func (m *MultisigSigner) SignTx(message []byte) ([]byte, error) {
 	return signatures, nil
 }
 
+// GetEVMAddress returns the EVM address
 func (m *MultisigSigner) GetEVMAddress(index int) *common.Address {
 	return m.signers[index].GetEVMAddress()
 }
 
+// GetEVMAddresses returns the EVM addresses
 func (m *MultisigSigner) GetEVMAddresses() []*common.Address {
 	addresses := make([]*common.Address, len(m.signers))
 	for i, signer := range m.signers {

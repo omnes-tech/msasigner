@@ -59,6 +59,17 @@ func NewBrowserWalletSigner(wsUrl string, publicKey []byte) (*BrowserWalletSigne
 	}, nil
 }
 
+// SignTypedData signs a typed data using ECDSA private key
+func (k *BrowserWalletSigner) SignTypedData(domain *eip712Domain, name string, data []Data) ([]byte, error) {
+	digest, err := domain.Digest(name, data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to hash struct: %w", err)
+	}
+
+	return k.SignHashWithAddedV(digest)
+}
+
+// SignMessage signs a message using ECDSA private key
 func (k *BrowserWalletSigner) SignMessage(message []byte) ([]byte, error) {
 
 	wrappedMessage := formatting.WrapMessage(message)
@@ -70,6 +81,7 @@ func (k *BrowserWalletSigner) SignMessage(message []byte) ([]byte, error) {
 	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
+// SignHashWithAddedV signs a hash with added V value using ECDSA private key
 func (k *BrowserWalletSigner) SignHashWithAddedV(message []byte) ([]byte, error) {
 	r, s, v, err := k.signHash(message, 27)
 	if err != nil {
@@ -79,6 +91,7 @@ func (k *BrowserWalletSigner) SignHashWithAddedV(message []byte) ([]byte, error)
 	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
+// SignHash signs a hash using ECDSA private key
 func (k *BrowserWalletSigner) SignHash(message []byte) ([]byte, error) {
 	r, s, v, err := k.signHash(message, 0)
 	if err != nil {
@@ -88,14 +101,17 @@ func (k *BrowserWalletSigner) SignHash(message []byte) ([]byte, error) {
 	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
+// SignTx signs a transaction using ECDSA private key
 func (k *BrowserWalletSigner) SignTx(message []byte) ([]byte, error) {
 	return k.SignHash(message)
 }
 
+// GetEVMAddress returns the EVM address
 func (k *BrowserWalletSigner) GetEVMAddress() *common.Address {
 	return &k.EVMAddress
 }
 
+// ECRecover recovers the EVM address from a message and signature
 func (k *BrowserWalletSigner) ECRecover(message []byte, signature []byte, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 	var hashedMessage []byte
 	if hashFunc != nil {
@@ -115,15 +131,18 @@ func (k *BrowserWalletSigner) ECRecover(message []byte, signature []byte, hashFu
 	return &recovered, bytes.Equal(uncompressedPubKeyOnData, uncompressedPubKey), nil
 }
 
+// ECRecoverRSV recovers the EVM address from a message, r, s, and v values
 func (k *BrowserWalletSigner) ECRecoverRSV(message []byte, r, s *big.Int, v uint8, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 	signature := formatting.JoinRSVSignature(r, s, v)
 	return k.ECRecover(message, signature, hashFunc)
 }
 
+// GetPublicKey returns the public key
 func (k *BrowserWalletSigner) GetPublicKey() string {
 	return common.Bytes2Hex(crypto.FromECDSAPub(k.PublicKey))
 }
 
+// Delete deletes the BrowserWalletSigner instance
 func (k *BrowserWalletSigner) Delete() {
 	k = nil
 }

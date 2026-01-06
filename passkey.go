@@ -44,6 +44,16 @@ func NewPasskeySigner(wsUrl string) (*PasskeySigner, error) {
 	}, nil
 }
 
+// SignTypedData signs a typed data using WebSocket-based passkey authentication
+func (k *PasskeySigner) SignTypedData(domain *eip712Domain, name string, data []Data) ([]byte, error) {
+	digest, err := domain.Digest(name, data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to hash struct: %w", err)
+	}
+
+	return k.signHash(digest)
+}
+
 // SignMessage signs a message using WebSocket-based passkey authentication
 func (k *PasskeySigner) SignMessage(message []byte) ([]byte, error) {
 	signature, err := k.sign(message)

@@ -54,6 +54,17 @@ func NewFireblocksSigner(apiPrivateKey []byte, apiKey string, clientId, assetId 
 	}, nil
 }
 
+// SignTypedData signs a typed data using WebSocket-based passkey authentication
+func (m *FireblocksSigner) SignTypedData(domain *eip712Domain, name string, data []Data) ([]byte, error) {
+	digest, err := domain.Digest(name, data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to hash struct: %w", err)
+	}
+
+	return m.SignHashWithAddedV(digest)
+}
+
+// SignMessage signs a message using Fireblocks
 func (m *FireblocksSigner) SignMessage(message []byte) ([]byte, error) {
 
 	wrappedMessage := formatting.WrapMessage(message)
@@ -66,6 +77,7 @@ func (m *FireblocksSigner) SignMessage(message []byte) ([]byte, error) {
 	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
+// SignHashWithAddedV signs a hash with added V value using Fireblocks
 func (k *FireblocksSigner) SignHashWithAddedV(message []byte) ([]byte, error) {
 	r, s, v, err := k.signHash(message, 27)
 	if err != nil {
@@ -75,6 +87,7 @@ func (k *FireblocksSigner) SignHashWithAddedV(message []byte) ([]byte, error) {
 	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
+// SignHash signs a hash using Fireblocks
 func (m *FireblocksSigner) SignHash(message []byte) ([]byte, error) {
 	r, s, v, err := m.signHash(message, 0)
 	if err != nil {
@@ -84,13 +97,17 @@ func (m *FireblocksSigner) SignHash(message []byte) ([]byte, error) {
 	return formatting.JoinRSVSignature(r, s, v), nil
 }
 
+// SignTx signs a transaction using Fireblocks
 func (m *FireblocksSigner) SignTx(message []byte) ([]byte, error) {
 	return m.SignHash(message)
 }
 
+// GetEVMAddress returns the EVM address
 func (m *FireblocksSigner) GetEVMAddress() *common.Address {
 	return &m.EVMAddress
 }
+
+// ECRecover recovers the EVM address from a message and signature
 func (m *FireblocksSigner) ECRecover(message []byte, signature []byte, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 	var hashedMessage []byte
 	if hashFunc != nil {
@@ -108,17 +125,22 @@ func (m *FireblocksSigner) ECRecover(message []byte, signature []byte, hashFunc 
 
 	return &recovered, bytes.Equal(m.UncompressedPublicKey, uncompressedPubKey), nil
 }
+
+// ECRecoverRSV recovers the EVM address from a message, r, s, and v values
 func (m *FireblocksSigner) ECRecoverRSV(message []byte, r, s *big.Int, v uint8, hashFunc func(...[]byte) []byte) (*common.Address, bool, error) {
 
 	signature := formatting.JoinRSVSignature(r, s, v)
 	return m.ECRecover(message, signature, hashFunc)
 }
 
+// GetPublicKey returns the public key
 func (m *FireblocksSigner) GetPublicKey() string {
 	return common.Bytes2Hex(m.UncompressedPublicKey)
 }
 
+// Delete deletes the FireblocksSigner instance
 func (m *FireblocksSigner) Delete() {
+	m = nil
 }
 
 func (m *FireblocksSigner) sign(message []byte) (*big.Int, *big.Int, uint8, error) {
