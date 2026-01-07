@@ -128,7 +128,7 @@ type Data struct {
 func (e *eip712Domain) HashStruct(name string, data []Data) ([]byte, error) {
 	structTypeString := name + "("
 	values := []any{}
-	types := []string{}
+	types := []string{"bytes32"}
 	for _, d := range data {
 		structTypeString += fmt.Sprintf("%s %s,", d.Type, d.Name)
 
